@@ -1,3 +1,6 @@
+module Main where
+
+
 import System.Directory
 import Data.Char
 import qualified Data.Map as Map
@@ -28,6 +31,7 @@ runMainLoop typeMap = do
             runMainLoop typeMap
 
 
+-- simple function to add an atomic type
 addAtomic :: Str2Type -> String -> Int -> Int -> IO()
 addAtomic typeMap name size align = do
     if Map.member name typeMap then do
@@ -37,6 +41,7 @@ addAtomic typeMap name size align = do
         runMainLoop $ Map.insert name (Atomic size align) typeMap
 
 
+-- simple function to add a struct
 addStruct :: Str2Type -> String -> [String] -> IO()
 addStruct typeMap name subtypes = do
     if Map.member name typeMap then do
@@ -49,6 +54,8 @@ addStruct typeMap name subtypes = do
             putStrLn "ERROR: UNO DE LOS NOMBRES EN LA LISTA YA HA SIDO USADO"
             runMainLoop typeMap
 
+
+-- simple function to add an union
 addUnion :: Str2Type -> String -> [String] -> IO()
 addUnion typeMap name subtypes = do
     if Map.member name typeMap then do
@@ -61,6 +68,9 @@ addUnion typeMap name subtypes = do
             putStrLn "ERROR: UNO DE LOS NOMBRES EN LA LISTA YA HA SIDO USADO"
             runMainLoop typeMap
 
+
+-- function that calls smaller funcions to describe each of the 
+-- 3 cases: normal, packed and ordered
 describe :: Str2Type -> String -> IO()
 describe typeMap name = do
     if not (Map.member name typeMap) then do
@@ -72,6 +82,10 @@ describe typeMap name = do
         describeOrder typeMap name
 
 
+-- function that prints the information of the type, respecting
+-- the normal order and alignments. Wasted space is size - used space.
+-- In the case of union, the wasted space is the minimum possible, this is
+-- size - maximum space used by some subtype
 describeNormal :: Str2Type -> String -> IO()
 describeNormal typeMap name = do
     let structSize = getEnd typeMap name 0
@@ -83,6 +97,9 @@ describeNormal typeMap name = do
     putStrLn $ "\tESPACIO PERDIDO: " ++ show (structSize - usedSpace)
 
 
+-- function that prints the information of the type respecting
+-- the normal order but ignoring the alignments. Wasted space
+-- is always 0 because there are no spaces between types
 describePacked :: Str2Type -> String -> IO()
 describePacked typeMap name = do
     let alignment = getAlignment typeMap name
@@ -93,6 +110,8 @@ describePacked typeMap name = do
     putStrLn $ "\tESPACIO PERDIDO: 0"
 
 
+-- function that prints the information of the type in the best
+-- possible order, respecting alignments
 describeOrder :: Str2Type -> String -> IO()
 describeOrder typeMap name = do
     let structSize = getBestEnd typeMap name 0
