@@ -96,7 +96,7 @@ getBestEndHelper typeMap (name:rest) pos = do
             let nextPos = getNextMult pos al + sz
             getBestEndHelper typeMap rest nextPos
         Struct subts -> do
-            -- solve new struct recursevely and continue with the current one
+            -- solve new struct recursively and continue with the current one
             -- after that
             let nextPos = getBestEnd typeMap name pos
             getBestEndHelper typeMap rest nextPos
