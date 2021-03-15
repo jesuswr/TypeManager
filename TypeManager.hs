@@ -75,3 +75,17 @@ getBestEndHelper typeMap (x:xs) pos = do
             let nextPos = getBestEnd typeMap x pos
             getBestEndHelper typeMap xs nextPos
 
+
+getBestAlign :: Str2Type -> String -> Int
+getBestAlign typeMap name =
+    case typeMap Map.! name of
+        Atomic sz al -> al
+        Struct subts -> do
+            let perms = List.permutations subts
+            let res   = map (\names -> getBestEndHelper typeMap names 0) perms
+            let pairs = zip perms res
+            let (perm, mn) = foldl (\(p,m) (p2,m2) -> if m <= m2 then (p,m) else (p2,m2)) ([], 42424242) pairs
+            getBestAlign typeMap (head perm)
+        Union subts -> do
+            let alins = map (getBestAlign typeMap) subts
+            foldl (\p q -> lcm p q) 1 alins

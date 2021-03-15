@@ -96,7 +96,9 @@ describePacked typeMap name = do
 describeOrder :: Str2Type -> String -> IO()
 describeOrder typeMap name = do
     let structSize = getBestEnd typeMap name 0
-    putStrLn "SIN EMPAQUETAR:"
+    let usedSpace = getSize typeMap name
+    let align = getBestAlign typeMap name
+    putStrLn "REORDENANDO:"
     putStrLn $ "\tTAMANO USADO: " ++ show structSize
-    putStrLn $ "\tALINEACION: "
-    putStrLn $ "\tESPACIO PERDIDO: "
+    putStrLn $ "\tALINEACION: " ++ show align
+    putStrLn $ "\tESPACIO PERDIDO: " ++ show (structSize - usedSpace)
