@@ -20,7 +20,10 @@ tests = TestList [
             test10,
             test11,
             test12,
-            test13
+            test13,
+            test14,
+            test15,
+            test16
         ]
 
 
@@ -78,3 +81,22 @@ test12 = TestCase (assertEqual "ERROR TEST 12" 19 (getBestEnd typeMap "UNI" 0))
 
 -- allignment in best case should also be 8
 test13 = TestCase (assertEqual "ERROR TEST 13" 8 (getBestAlign typeMap "UNI"))
+
+-- space used should be equal to space used by meta
+test14 = TestCase (assertEqual "ERROR TEST 14" 19 (getSize typeMap "UNI"))
+
+
+-- a simple map for recursive test
+-- atomic int 4 4
+-- atomic char 1 2
+-- struct a [int, char]
+-- union b [int, char]
+-- struct c [a, b]
+typeMap2 :: Str2Type
+typeMap2 = Map.fromList [("A",Struct {subtypes = ["INT","CHAR"]}),("B",Union {subtypes = ["INT","CHAR"]}),("C",Struct {subtypes = ["A","B"]}),("CHAR",Atomic {size = 1, align = 2}),("INT",Atomic {size = 4, align = 4})]
+
+-- size of c normally should be 12
+test15 = TestCase (assertEqual "ERROR TEST 15" 12 (getEnd typeMap2 "C" 0))
+
+-- size of c in the best case is 9
+test16 = TestCase (assertEqual "ERROR TEST 16" 9 (getBestEnd typeMap2 "C" 0))

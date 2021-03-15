@@ -1,10 +1,11 @@
 all: test typemanager
 
 test:
-	ghc Tests.hs
+	ghc -fhpc Tests.hs TypeManager.hs
 
 typemanager:
 	ghc main.hs -o TypeManager
 
 clean:
-	rm TypeManager Tests *.o *.hi
+	rm TypeManager Tests *.o *.hi *.tix 
+	rm -r .hpc
