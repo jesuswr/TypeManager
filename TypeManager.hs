@@ -101,7 +101,7 @@ getBestEndHelper typeMap (name:rest) pos = do
             let nextPos = getBestEnd typeMap name pos
             getBestEndHelper typeMap rest nextPos
         Union subts -> do
-            -- get the best possible size for a union and continue with the 
+            -- get the best possible size for the union and continue with the 
             -- current struct after that
             let nextPos = getBestEnd typeMap name pos
             getBestEndHelper typeMap rest nextPos
